@@ -24,7 +24,8 @@ contract NFT is ERC721, ERC721URIStorage, Ownable {
         require(_tokenCount < MAX_SUPPLY, "Max supply reached");
         require(msg.value >= mintPrice, "Insufficient payment");
 
-        uint256 tokenId = _tokenCount++;
+        _tokenCount++;
+        uint256 tokenId = _tokenCount; // tokenId starts from 1
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, uri);
 
