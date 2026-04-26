@@ -4,13 +4,9 @@ pragma solidity ^0.8.28;
 import "openzeppelin-contracts/contracts/interfaces/IERC721.sol";
 
 interface IAuctionHouse {
-    function createAuction(
-        address seller,
-        address nftContract,
-        uint256 tokenId,
-        uint256 startPrice,
-        uint256 duration
-    ) external returns (uint256 auctionId);
+    function createAuction(address seller, address nftContract, uint256 tokenId, uint256 startPrice, uint256 duration)
+        external
+        returns (uint256 auctionId);
 
     function isActive(address nftContract, uint256 tokenId) external view returns (bool);
 }
@@ -42,12 +38,10 @@ contract NFTMarketplace {
     constructor(address _auctionContract) {
         // Type cast, treat this address as if it implements the IAuctionHouse interface
         // Solidity does zero runtime checking, so if the contract doesn't support functions in interface, transaction reverts.
-        auctionHouse = IAuctionHouse(_auctionContract); 
+        auctionHouse = IAuctionHouse(_auctionContract);
     }
 
-    function listNFT(address nftContract, uint256 tokenId)
-        external returns (uint256)
-    {
+    function listNFT(address nftContract, uint256 tokenId) external returns (uint256) {
         require(tokenId > 0, "Invalid token ID");
         require(nftContract != address(0), "Invalid NFT contract");
         require(!activeListings[nftContract][tokenId], "NFT is already listed");
@@ -55,12 +49,7 @@ contract NFTMarketplace {
         IERC721 nft = IERC721(nftContract);
         require(nft.ownerOf(tokenId) == msg.sender, "Only owner can list NFT");
 
-        listings.push(Listing({
-            seller: msg.sender,
-            nftContract: nftContract,
-            tokenId: tokenId,
-            isListing: true
-        }));
+        listings.push(Listing({seller: msg.sender, nftContract: nftContract, tokenId: tokenId, isListing: true}));
 
         activeListings[nftContract][tokenId] = true;
 
@@ -83,11 +72,9 @@ contract NFTMarketplace {
         emit Delisted(msg.sender, l.nftContract, l.tokenId, listingId);
     }
 
-    function createAuction(
-        uint256 listingId, 
-        uint256 startPrice, 
-        uint256 duration) 
-        external returns (uint256 auctionId)
+    function createAuction(uint256 listingId, uint256 startPrice, uint256 duration)
+        external
+        returns (uint256 auctionId)
     {
         // Validate inputs
         require(listingId < listings.length, "Invalid listing ID");
@@ -97,13 +84,16 @@ contract NFTMarketplace {
         Listing storage l = listings[listingId];
         address nftContract = l.nftContract;
         uint256 tokenId = l.tokenId;
-        require(!auctionHouse.isActive(nftContract, tokenId),"NFT already in auction");
+        require(!auctionHouse.isActive(nftContract, tokenId), "NFT already in auction");
 
         // verify ownership and approval
         IERC721 nft = IERC721(nftContract);
         require(nft.ownerOf(tokenId) == msg.sender, "Only owner can create auction");
-        require(nft.getApproved(tokenId) == address(this) || nft.isApprovedForAll(msg.sender, address(this)), "Marketplace must be approved to transfer NFT");
-        
+        require(
+            nft.getApproved(tokenId) == address(this) || nft.isApprovedForAll(msg.sender, address(this)),
+            "Marketplace must be approved to transfer NFT"
+        );
+
         // transfer NFT and create auction
         nft.safeTransferFrom(msg.sender, address(auctionHouse), tokenId);
         auctionId = auctionHouse.createAuction(msg.sender, nftContract, tokenId, startPrice, duration);

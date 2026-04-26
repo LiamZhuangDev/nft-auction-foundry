@@ -37,23 +37,19 @@ contract NFT is ERC721, ERC721URIStorage, Ownable {
         uint256 balance = address(this).balance;
         require(balance > 0, "No funds to withdraw");
 
-        (bool success, ) = owner().call{value: balance}("");
+        (bool success,) = owner().call{value: balance}("");
         require(success, "Withdrawal failed");
     }
 
     /* The following are required overridden functions */
-    
-    // Both ERC721 and ERC721URIStorage implement tokenURI. We need to specify which one to use. 
-    function tokenURI(uint256 tokenId) 
-        public view override(ERC721, ERC721URIStorage) returns (string memory)
-    {
+
+    // Both ERC721 and ERC721URIStorage implement tokenURI. We need to specify which one to use.
+    function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
         return super.tokenURI(tokenId);
     }
 
     // Both ERC721 and ERC721URIStorage implement supportsInterface. We need to specify which one to use.
-    function supportsInterface(bytes4 interfaceId)
-        public view override(ERC721, ERC721URIStorage) returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }

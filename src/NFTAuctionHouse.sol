@@ -28,50 +28,40 @@ contract NFTAuctionHouse is IERC721Receiver {
         address indexed nftContract,
         uint256 tokenId,
         uint256 startPrice,
-        uint256 end);
-    
-    event BidPlaced(
-        uint256 indexed auctionId, 
-        address indexed bidder, 
-        uint256 amount);
+        uint256 end
+    );
 
-    event AuctionEnded(
-        uint256 indexed auctionId, 
-        address indexed winner, 
-        uint256 amount);
+    event BidPlaced(uint256 indexed auctionId, address indexed bidder, uint256 amount);
 
-    event Withdrawal(
-        uint256 indexed auctionId,
-        address indexed bidder,
-        uint256 amount);
+    event AuctionEnded(uint256 indexed auctionId, address indexed winner, uint256 amount);
+
+    event Withdrawal(uint256 indexed auctionId, address indexed bidder, uint256 amount);
 
     constructor(address _feeRecipient) {
         feeRecipient = _feeRecipient;
     }
 
-    function createAuction(
-        address seller,
-        address nftContract,
-        uint256 tokenId,
-        uint256 startPrice,
-        uint256 duration
-    ) external returns (uint256 auctionId)
+    function createAuction(address seller, address nftContract, uint256 tokenId, uint256 startPrice, uint256 duration)
+        external
+        returns (uint256 auctionId)
     {
-        auctions.push(Auction({
-            seller: seller,
-            nftContract: nftContract,
-            tokenId: tokenId,
-            highestBid: startPrice,
-            highestBidder: address(0),
-            endTime: block.timestamp + duration,
-            active: true
-        }));
+        auctions.push(
+            Auction({
+                seller: seller,
+                nftContract: nftContract,
+                tokenId: tokenId,
+                highestBid: startPrice,
+                highestBidder: address(0),
+                endTime: block.timestamp + duration,
+                active: true
+            })
+        );
         auctionId = auctions.length - 1;
         activeAuctions[nftContract][tokenId] = true;
 
         emit AuctionCreated(auctionId, seller, nftContract, tokenId, startPrice, block.timestamp + duration);
     }
-    
+
     function placeBid(uint256 auctionId) external payable {
         require(auctionId < auctions.length, "Invalid auction ID");
         Auction storage a = auctions[auctionId];
@@ -103,7 +93,7 @@ contract NFTAuctionHouse is IERC721Receiver {
 
         pendingReturns[auctionId][msg.sender] = 0;
 
-        (bool success, ) = msg.sender.call{value: amount}("");
+        (bool success,) = msg.sender.call{value: amount}("");
         require(success, "Withdrawal failed");
 
         emit Withdrawal(auctionId, msg.sender, amount);
@@ -115,7 +105,10 @@ contract NFTAuctionHouse is IERC721Receiver {
 
         require(a.active, "Auction is not active");
         require(block.timestamp >= a.endTime, "Auction has not ended");
-        require(msg.sender == a.seller || msg.sender == a.highestBidder, "Only seller or highest bidder can finalize the auction");
+        require(
+            msg.sender == a.seller || msg.sender == a.highestBidder,
+            "Only seller or highest bidder can finalize the auction"
+        );
 
         a.active = false;
         activeAuctions[a.nftContract][a.tokenId] = false;
@@ -129,10 +122,10 @@ contract NFTAuctionHouse is IERC721Receiver {
             IERC721(a.nftContract).safeTransferFrom(address(this), a.highestBidder, a.tokenId);
 
             // Transfer funds to seller and fee recipient
-            (bool success, ) = a.seller.call{value: sellerProceeds}("");
+            (bool success,) = a.seller.call{value: sellerProceeds}("");
             require(success, "Payment to seller failed");
 
-            (bool success2, ) = feeRecipient.call{value: fee}("");
+            (bool success2,) = feeRecipient.call{value: fee}("");
             require(success2, "Payment to fee recipient failed");
         } else {
             // No bids were placed, return NFT to seller
@@ -154,10 +147,19 @@ contract NFTAuctionHouse is IERC721Receiver {
 
     // onERC721Received is ONLY required if the receiver is a CONTRACT
     function onERC721Received(
-        address /*operator*/, 
-        address /*from*/, 
-        uint256 /*tokenId*/, 
-        bytes calldata /*data*/) external pure override returns (bytes4) {
-            return IERC721Receiver.onERC721Received.selector;
+        address,
+        /*operator*/
+        address,
+        /*from*/
+        uint256,
+        /*tokenId*/
+        bytes calldata /*data*/
+    )
+        external
+        pure
+        override
+        returns (bytes4)
+    {
+        return IERC721Receiver.onERC721Received.selector;
     }
 }
