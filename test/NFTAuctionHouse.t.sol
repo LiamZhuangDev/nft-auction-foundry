@@ -53,7 +53,7 @@ contract NFTAuctionHouseTest is Test {
         vm.prank(bidder1);
         auctionHouse.placeBid{value: 2 ether}(auctionId);
 
-        (,,,uint256 highestBid,address highestBidder,,) = auctionHouse.auctions(auctionId);
+        (,,, uint256 highestBid, address highestBidder,,) = auctionHouse.auctions(auctionId);
 
         assertEq(highestBid, 2 ether);
         assertEq(highestBidder, bidder1);

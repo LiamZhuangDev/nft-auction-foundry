@@ -16,7 +16,7 @@ contract NFTTest is Test {
     }
 
     /* -------------------------- Mint Tests -------------------------- */
-    
+
     function testMintSuccess() public {
         vm.deal(user, 1 ether);
 

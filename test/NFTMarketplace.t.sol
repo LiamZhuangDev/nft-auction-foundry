@@ -12,13 +12,10 @@ contract MockAuctionHouse is IAuctionHouse, IERC721Receiver {
     uint256 public nextId;
     mapping(address => mapping(uint256 => bool)) public active;
 
-    function createAuction(
-        address,
-        address nftContract,
-        uint256 tokenId,
-        uint256,
-        uint256
-    ) external returns (uint256 auctionId) {
+    function createAuction(address, address nftContract, uint256 tokenId, uint256, uint256)
+        external
+        returns (uint256 auctionId)
+    {
         auctionId = nextId++;
         active[nftContract][tokenId] = true;
     }
@@ -27,12 +24,7 @@ contract MockAuctionHouse is IAuctionHouse, IERC721Receiver {
         return active[nftContract][tokenId];
     }
 
-    function onERC721Received(
-        address,
-        address,
-        uint256,
-        bytes calldata
-    ) external pure override returns (bytes4) {
+    function onERC721Received(address, address, uint256, bytes calldata) external pure override returns (bytes4) {
         return IERC721Receiver.onERC721Received.selector;
     }
 }
@@ -60,7 +52,7 @@ contract NFTMarketplaceTest is Test {
     }
 
     /* ---------------------- Listing Tests---------------------- */
-    
+
     function testListNFT() public {
         vm.prank(user);
         uint256 listingId = marketplace.listNFT(address(nft), tokenId);
@@ -71,7 +63,7 @@ contract NFTMarketplaceTest is Test {
         assertEq(nftAddr, address(nft));
         assertEq(id, tokenId);
         assertTrue(isListing);
-        assertTrue(marketplace.activeListings(nftAddr,id));
+        assertTrue(marketplace.activeListings(nftAddr, id));
     }
 
     function testListFailsIfInvalidTokenId() public {
