@@ -37,6 +37,8 @@ contract NFTAuctionHouse is IERC721Receiver {
 
     event Withdrawal(uint256 indexed auctionId, address indexed bidder, uint256 amount);
 
+    event NFTReceived(address operator, address from, uint256 tokenId, bytes data);
+
     constructor(address _feeRecipient) {
         feeRecipient = _feeRecipient;
     }
@@ -45,6 +47,18 @@ contract NFTAuctionHouse is IERC721Receiver {
         external
         returns (uint256 auctionId)
     {
+        // validate inputs
+        require(seller != address(0), "seller cannot be address zero");
+        require(nftContract != address(0), "nft cannot be adderss zero");
+        require(tokenId > 0, "Token ID must be greater than zero");
+        require(startPrice > 0, "Start price must be greater than zero");
+        require(duration > 0, "Duration must be greater than zero");
+
+        // verify ownership
+        // AuctionHouse should assume NFT is already transferred in
+        IERC721 nft = IERC721(nftContract);
+        require(nft.ownerOf(tokenId) == address(this), "Owner mismatch");
+
         auctions.push(
             Auction({
                 seller: seller,
@@ -147,19 +161,16 @@ contract NFTAuctionHouse is IERC721Receiver {
 
     // onERC721Received is ONLY required if the receiver is a CONTRACT
     function onERC721Received(
-        address,
-        /*operator*/
-        address,
-        /*from*/
-        uint256,
-        /*tokenId*/
-        bytes calldata /*data*/
+        address operator, /* initiated the transfer */
+        address from, /*previous owner of the NFT*/
+        uint256 tokenId,
+        bytes calldata data
     )
         external
-        pure
         override
         returns (bytes4)
     {
+        emit NFTReceived(operator, from, tokenId, data);
         return IERC721Receiver.onERC721Received.selector;
     }
 }
