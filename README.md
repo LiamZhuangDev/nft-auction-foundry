@@ -33,6 +33,11 @@ func main() {
 go run main.go
 ```
 
+### Install Gin
+```bash
+go get github.com/gin-gonic/gin
+```
+
 ### Foundry Test functions
 - Must start with `test`
 ```solidity
