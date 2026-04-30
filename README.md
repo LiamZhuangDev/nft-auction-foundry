@@ -9,6 +9,30 @@ export PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f
 forge script script/Deploy.s.sol:Deploy --rpc-url http://127.0.0.1:8545 --broadcast
 ```
 
+### Set up Go backend
+- Initialize a Go module
+```bash
+go mod init nft-auction-back
+```
+
+- Create main (entry) file
+```bash
+touch main.go
+```
+```go
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Hello, NFT Auction Go Backend!")
+}
+```
+- Run the go backend
+```bash
+go run main.go
+```
+
 ### Foundry Test functions
 - Must start with `test`
 ```solidity
