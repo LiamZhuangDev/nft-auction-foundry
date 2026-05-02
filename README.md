@@ -36,7 +36,70 @@ go run main.go
 ### Install Gin
 ```bash
 go get github.com/gin-gonic/gin
-go mod tidy # cleanup dependencies
+go get github.com/gin-contrib/cors
+go mod tidy # cleanup dependencies if needed
+```
+
+### API routing
+```
+backend
+├──	api/
+	├── server.go        # setup + router init
+	├── routes.go        # route definitions
+	├── handlers/
+	│   ├── listing.go   # handle listing requests
+	│   ├── auction.go   # handle auction requests
+	│   └── bid.go       # handle bid requests
+```
+### Install gorm
+```bash
+cd backend
+go get gorm.io/gorm
+go get gorm.io/driver/mysql #mysql driver
+go get gorm.io/driver/postgres # postgres driver
+```
+
+### Define models and repositories
+```
+backend
+|__api
+|__models
+|	├── auction.go
+|	├── bid.go 
+|	├── listing.go 
+|__repo
+	├── auction_repo.go
+	├── bid_repo.go 
+	├── listing_repo.go 
+```
+
+### Set up MySQL
+```bash
+sudo apt install mysql-server
+sudo systemctl start mysql
+# open MySQL CLI
+sudo mysql
+# create table, user and password
+mysql > CREATE USER 'user'@'%' IDENTIFIED BY 'password';
+mysql > GRANT ALL PRIVILEGES ON nft_marketplace.* TO 'user'@'%';
+mysql > FLUSH PRIVILEGES;
+```
+
+### Connect to DB
+```go
+dsn := "user:password@tcp(127.0.0.1:3306)/nft_marketplace?charset=utf8mb4&parseTime=True&loc=Local"
+
+db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+if err != nil {
+   log.Fatal(err)
+}
+
+err = db.AutoMigrate(&models.Listing{}, &models.Auction{}, &models.Bid{})
+if err != nil {
+   log.Fatal(err)
+}
+
+return db
 ```
 
 ### Foundry Test functions
