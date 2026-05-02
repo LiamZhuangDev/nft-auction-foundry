@@ -15,5 +15,5 @@ func RegisterRoutes(
 ) {
 	r.GET("/listings", handlers.GetListings(listingRepo))
 	r.GET("/auctions", handlers.GetAuctions(auctionRepo))
-	r.GET("/bids/:id", handlers.GetBids(bidRepo))
+	r.GET("/bids/:auction_id", handlers.GetBids(bidRepo))
 }

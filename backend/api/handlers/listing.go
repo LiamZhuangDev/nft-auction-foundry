@@ -9,7 +9,7 @@ import (
 
 func GetListings(repo *repo.ListingRepo) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		listings, err := repo.GetAllListings()
+		listings, err := repo.GetListings()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed"})
 			return
