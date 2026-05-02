@@ -36,6 +36,7 @@ go run main.go
 ### Install Gin
 ```bash
 go get github.com/gin-gonic/gin
+go mod tidy # cleanup dependencies
 ```
 
 ### Foundry Test functions
