@@ -102,6 +102,38 @@ if err != nil {
 return db
 ```
 
+### Ethereum Events and Logs
+```solidity
+event Transfer(address indexed from, address indexed to, uint256 value);
+```
+corresponding `vLog`
+```go
+types.Log{
+    Address: common.HexToAddress("0x1234567890abcdef1234567890abcdef12345678"),
+    // Topics is an array of 32-byte hashes([]common.hash). Each topic is a `bytes32` value
+	Topics: []common.Hash{
+        // Topic[0]: keccak256("Transfer(address,address,uint256)")
+        common.HexToHash("0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55aebc4a0b6c"),
+        
+        // Topic[1]: indexed from (address)
+        common.HexToHash("0x000000000000000000000000aabbccddeeff0011223344556677889900aabbcc"),
+        
+        // Topic[2]: indexed to (address)
+        common.HexToHash("0x000000000000000000000000ffeeddccbbaa99887766554433221100ffeeddcc"),
+    },
+    Data: common.FromHex(
+        // non-indexed params (e.g., uint256 value)
+        "0x00000000000000000000000000000000000000000000000000000000000003e8",
+    ),
+    BlockNumber: 12345678,
+    TxHash:      common.HexToHash("0xabc123..."),
+    TxIndex:     0,
+    BlockHash:   common.HexToHash("0xdef456..."),
+    Index:       0,
+    Removed:     false,
+}
+```
+
 ### Foundry Test functions
 - Must start with `test`
 ```solidity
