@@ -14,7 +14,11 @@ func NewBidRepo(db *gorm.DB) *BidRepo {
 	return &BidRepo{DB: db}
 }
 
-func (r *BidRepo) GetBids(auctionID uint64) ([]models.Bid, error) {
+func (r *BidRepo) CreateBid(b *models.Bid) error {
+	return r.DB.Create(b).Error
+}
+
+func (r *BidRepo) GetBidsByAuctionId(auctionID uint64) ([]models.Bid, error) {
 	var bids []models.Bid
 
 	err := r.DB.

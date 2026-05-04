@@ -14,6 +14,10 @@ func NewListingRepo(db *gorm.DB) *ListingRepo {
 	return &ListingRepo{DB: db}
 }
 
+func (r *ListingRepo) CreateListing(l *models.Listing) error {
+	return r.DB.Create(l).Error
+}
+
 func (r *ListingRepo) GetListings() ([]models.Listing, error) {
 	var listings []models.Listing
 
