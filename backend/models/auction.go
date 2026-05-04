@@ -1,7 +1,8 @@
 package models
 
 type Auction struct {
-	ID          uint64 `gorm:"primaryKey"`
+	ID          uint64 `gorm:"primaryKey"`  // DB internal ID
+	AuctionID   string `gorm:"uniqueIndex"` // on-chain ID
 	Seller      string
 	NftContract string
 	TokenId     string
