@@ -79,7 +79,10 @@ sudo apt install mysql-server
 sudo systemctl start mysql
 # open MySQL CLI
 sudo mysql
-# create table, user and password
+# delete database if wanna start from scratch
+mysql > DROP DATABASE IF EXISTS nft_marketplace;
+# create database, user/password, and privileges
+mysql > CREATE DATABASE nft_marketplace;
 mysql > CREATE USER 'user'@'%' IDENTIFIED BY 'password';
 mysql > GRANT ALL PRIVILEGES ON nft_marketplace.* TO 'user'@'%';
 mysql > FLUSH PRIVILEGES;

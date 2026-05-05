@@ -93,7 +93,7 @@ func handleAuctionLog(abi abi.ABI, vLog types.Log, auctionRepo *repo.AuctionRepo
 
 		// Save auction
 		err = auctionRepo.CreateAuction(&models.Auction{
-			AuctionID:   auctionId.String(),
+			AuctionID:   auctionId.Uint64(),
 			Seller:      seller.Hex(),
 			NftContract: nftContract.Hex(),
 			TokenId:     data.TokenId.String(),
