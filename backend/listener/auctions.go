@@ -77,7 +77,7 @@ func handleAuctionLog(abi abi.ABI, vLog types.Log, auctionRepo *repo.AuctionRepo
 		var data struct {
 			TokenId    *big.Int
 			StartPrice *big.Int
-			EndTime    *big.Int
+			End        *big.Int
 		}
 
 		err := abi.UnpackIntoInterface(&data, event.Name, vLog.Data)
@@ -98,7 +98,7 @@ func handleAuctionLog(abi abi.ABI, vLog types.Log, auctionRepo *repo.AuctionRepo
 			NftContract: nftContract.Hex(),
 			TokenId:     data.TokenId.String(),
 			StartPrice:  data.StartPrice.String(),
-			EndTime:     data.EndTime.Uint64(),
+			EndTime:     data.End.Uint64(),
 			Active:      true,
 		})
 		if err != nil {
@@ -107,7 +107,7 @@ func handleAuctionLog(abi abi.ABI, vLog types.Log, auctionRepo *repo.AuctionRepo
 		}
 
 		log.Printf("AuctionCreated: AuctionID=%d, Seller=%s, NFT=%s, TokenID=%s, StartPrice=%s, EndTime=%d\n",
-			auctionId.Uint64(), seller.Hex(), nftContract.Hex(), data.TokenId.String(), data.StartPrice.String(), data.EndTime.Uint64())
+			auctionId.Uint64(), seller.Hex(), nftContract.Hex(), data.TokenId.String(), data.StartPrice.String(), data.End.Uint64())
 	case "BidPlaced":
 		log.Println("Received BidPlaced event")
 

@@ -11,14 +11,6 @@ interface IAuctionHouse {
     function isActive(address nftContract, uint256 tokenId) external view returns (bool);
 }
 
-// Design Overview:
-// User
-//  ↓
-// Marketplace (entry point / orchestrator)
-//  └─ Delegates auctions → AuctionHouse
-//                           ├─ createAuction
-//                           ├─ placeBid
-//                           └─ endAuction
 contract NFTMarketplace {
     struct Listing {
         address seller;
