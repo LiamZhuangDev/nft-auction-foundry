@@ -88,9 +88,10 @@ func handleListingLog(abi abi.ABI, vLog types.Log, listingRepo *repo.ListingRepo
 		nftContract := common.HexToAddress(vLog.Topics[2].Hex())
 
 		err = listingRepo.CreateListing(&models.Listing{
+			ListingID:   data.ListingId.Uint64(),
 			Seller:      seller.Hex(),
 			NftContract: nftContract.Hex(),
-			TokenId:     data.TokenId.String(),
+			TokenId:     data.TokenId.Uint64(),
 			Active:      true,
 		})
 

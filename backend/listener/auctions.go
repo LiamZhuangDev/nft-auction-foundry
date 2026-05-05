@@ -96,7 +96,7 @@ func handleAuctionLog(abi abi.ABI, vLog types.Log, auctionRepo *repo.AuctionRepo
 			AuctionID:   auctionId.Uint64(),
 			Seller:      seller.Hex(),
 			NftContract: nftContract.Hex(),
-			TokenId:     data.TokenId.String(),
+			TokenId:     data.TokenId.Uint64(),
 			StartPrice:  data.StartPrice.String(),
 			EndTime:     data.End.Uint64(),
 			Active:      true,

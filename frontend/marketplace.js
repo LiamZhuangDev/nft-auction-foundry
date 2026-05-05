@@ -28,7 +28,7 @@ function renderListings(listings) {
     listings.forEach(l => {
         const div = document.createElement("div");
         div.innerHTML = `
-            <p><strong>Listing ID: </strong> ${l.ID}</p>
+            <p><strong>Listing ID: </strong> ${l.ListingID}</p>
             <p><strong>Seller: </strong> ${l.Seller}</p>
             <p><strong>NFT: </strong> ${l.NftContract}</p>
             <p><strong>Token ID: </strong> ${l.TokenId}</p>

@@ -5,7 +5,7 @@ type Auction struct {
 	AuctionID   uint64 `gorm:"uniqueIndex"` // on-chain ID
 	Seller      string
 	NftContract string
-	TokenId     string
+	TokenId     uint64
 	StartPrice  string
 	EndTime     uint64
 	Active      bool

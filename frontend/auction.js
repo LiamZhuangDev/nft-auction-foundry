@@ -54,7 +54,7 @@ export async function fetchBids() {
       return;
     }
 
-    const res = await fetch(`${API_URL}/bids/${auctionId}`);
+    const res = await fetch(`${API_URL}/auctions/${auctionId}/bids`);
 
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
@@ -78,7 +78,7 @@ function renderBids(bids) {
   bids.forEach(b => {
     const div = document.createElement("div");
     div.innerHTML = `
-      <p><strong>Auction ID: </strong> ${b.AuctionId}</p>
+      <p><strong>Auction ID: </strong> ${b.AuctionID}</p>
       <p><strong>Bidder: </strong> ${b.Bidder}</p>
       <p><strong>Amount: </strong> ${ethers.formatEther(b.Amount)} ETH</p>
       <p><strong>Timestamp: </strong> ${new Date(b.Timestamp * 1000).toLocaleString()}</p>
