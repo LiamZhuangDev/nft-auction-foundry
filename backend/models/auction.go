@@ -9,5 +9,8 @@ type Auction struct {
 	StartPrice  string
 	EndTime     uint64
 	Active      bool
-	Bids        []Bid `gorm:"foreignKey:AuctionID"` // optional, gorm can actually figure foreign key out if following the convention
+	// By default, GORM would assume bids.auction_id -> auctions.id
+	// But it's linking bids using on-chain ID. So when access Auction.Bids,
+	// use `references:AuctionID` to match bids.auction_id with auctions.auction_id
+	Bids []Bid `gorm:"foreignKey:AuctionID;references:AuctionID"`
 }
