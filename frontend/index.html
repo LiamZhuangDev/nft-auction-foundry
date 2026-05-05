@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NFT Marketplace</title>
+</head>
+<body>
+  <h1>NFT Marketplace</h1>
+
+  <button onclick="connectWallet()">Connect Wallet</button>
+
+  <h2>Mint NFT</h2>
+  <input id="tokenURI" placeholder="Token URI" />
+  <button onclick="mintNFT()">Mint</button>
+
+  <h2>List NFT</h2>
+  <input id="listTokenId" placeholder="Token ID" />
+  <button onclick="approveNFT()">Approve</button>
+  <button onclick="listNFT()">List</button>
+
+  <h2>Listings</h2>
+  <button onclick="fetchListings()">Load Listings</button>
+  <div id="listings"></div>
+
+  <h2>Create Auction</h2>
+  <input id="listingId" placeholder="Listing ID" />
+  <input id="startPrice" placeholder="Start Price (ETH)" />
+  <input id="duration" placeholder="Duration (seconds)" />
+  <button onclick="createAuction()">Create Auction</button>
+
+  <h2>Auctions</h2>
+  <button onclick="fetchAuctions()">Load Auctions</button>
+  <div id="auctions"></div>
+
+  <h2>Place Bid</h2>
+  <input id="auctionId" placeholder="Auction ID" />
+  <input id="bidAmount" placeholder="Bid Amount (ETH)" />
+  <button onclick="placeBid()">Bid</button>
+
+  <h2>Bids</h2>
+  <input type="number" id="auctionIdInput" placeholder="Auction ID" />
+  <button onclick="fetchBids()">Load Bids</button>
+  <div id="bids"></div>
+
+  <h2>Finalize Auction</h2>
+  <input id="finalizeAuctionId" placeholder="Auction ID" />
+  <button onclick="finalizeAuction()">Finalize</button>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
