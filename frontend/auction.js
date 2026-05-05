@@ -33,12 +33,18 @@ function renderAuctions(auctions) {
       : "Ended";
 
     const div = document.createElement("div");
+
+    const finalPrice = a.FinalPrice && a.FinalPrice !== ""
+      ? ethers.formatEther(a.FinalPrice)
+      : "N/A";
+
     div.innerHTML = `
       <p><strong>Auction ID: </strong> ${a.AuctionID}</p>
       <p><strong>Seller: </strong> ${a.Seller}</p>
       <p><strong>NFT: </strong> ${a.NftContract}</p>
       <p><strong>Token ID: </strong> ${a.TokenId}</p>
       <p><strong>Start Price: </strong> ${ethers.formatEther(a.StartPrice)} ETH</p>
+      <p><strong>Final Price: </strong> ${finalPrice} ETH</p>
       <p><strong>End Time: </strong> ${new Date(a.EndTime * 1000).toLocaleString()}</p>
       <p><strong>Status: </strong> ${status}</p>
     `;

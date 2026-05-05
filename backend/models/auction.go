@@ -7,6 +7,7 @@ type Auction struct {
 	NftContract string
 	TokenId     uint64
 	StartPrice  string
+	FinalPrice  string
 	EndTime     uint64
 	Active      bool
 	// By default, GORM would assume bids.auction_id -> auctions.id

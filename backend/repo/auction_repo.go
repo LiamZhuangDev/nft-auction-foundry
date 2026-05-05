@@ -28,11 +28,14 @@ func (r *AuctionRepo) GetAuctions() ([]models.Auction, error) {
 	return auctions, nil
 }
 
-func (r *AuctionRepo) UpdateAuctionStatus(id uint64, status bool) error {
+func (r *AuctionRepo) UpdateAuctionStatus(id uint64, finalPrice string, status bool) error {
 	err := r.DB.
 		Model(&models.Auction{}).
 		Where("auction_id = ?", id).
-		Update("active", status).Error
+		Updates(map[string]any{
+			"final_price": finalPrice,
+			"active":      status,
+		}).Error
 
 	return err
 }

@@ -157,7 +157,7 @@ func handleAuctionLog(abi abi.ABI, vLog types.Log, auctionRepo *repo.AuctionRepo
 		winner := common.BytesToAddress(vLog.Topics[2].Bytes())
 
 		// Update Auction
-		err = auctionRepo.UpdateAuctionStatus(auctionId.Uint64(), false)
+		err = auctionRepo.UpdateAuctionStatus(auctionId.Uint64(), data.Amount.String(), false)
 		if err != nil {
 			log.Printf("Failed to update auction %d status, error: %v\n", auctionId.Uint64(), err)
 			return
