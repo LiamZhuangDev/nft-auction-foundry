@@ -2,13 +2,34 @@
 ```bash
 anvil
 ```
+### Create contracts
+```bash
+# Install OpenZeppelin for ERC721 token
+forge install OpenZeppelin/openzeppelin-contracts
+
+# Design Overview:
+# User
+#  ↓
+# Marketplace (entry point / orchestrator)
+#  └─ Delegates auctions → AuctionHouse
+#                           ├─ createAuction
+#                           ├─ placeBid
+#                           └─ endAuction
+```
+```
+src
+├── NFT.sol
+├── NFTAuctionHouse.sol
+├── NFTMarketplace.sol
+```
+
 ### Deploy contracts to the running node in terminal 2
 ```bash
 export PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 # Anvil’s default first account
 
 forge script script/Deploy.s.sol:Deploy --rpc-url http://127.0.0.1:8545 --broadcast
 ```
-
+---
 ### Set up Go backend
 - Initialize a Go module
 ```bash
@@ -136,7 +157,43 @@ types.Log{
     Removed:     false,
 }
 ```
+---
+### Full Stack Workflow
+```bash
+# Start local ethereum dev node
+anvil
 
+# Deploy contracts to the local network
+export PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 # Anvil’s default first account
+forge script script/Deploy.s.sol:Deploy --rpc-url http://127.0.0.1:8545 --broadcast
+
+# Update contract addresses in backend and frontend's configuration
+frontend
+|__config.js
+
+backend
+|__config
+     |__env_vars.go
+
+# Run Go backend
+cd backend
+go run main.go
+
+# Launch the frontend (serves static files on a local server)
+cd frontend
+npx serve .
+
+# Open MetaMask and import accounts that created by anvil via Add wallet -> Import an account and enter private key
+
+# Access http://localhost:3000 and connect to an added account
+
+# Mint a NFT by enter ipfs://fake-uri and click Mint button then approve in MetaMask
+
+# Approve NFT market and List the minted NFT, tokenId starts from 1.
+
+# 
+```
+---
 ### Foundry Test functions
 - Must start with `test`
 ```solidity
