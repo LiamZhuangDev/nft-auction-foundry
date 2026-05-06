@@ -124,3 +124,14 @@ export async function finalizeAuction() {
 
   console.log("Auction Finalized");
 }
+
+export async function withdrawBid() {
+  const { auction } = getContracts();
+
+  const auctionId = document.getElementById("withdrawAuctionId").value;
+
+  const tx = await auction.withdrawBid(auctionId);
+  await tx.wait();
+
+  console.log("Widthdrawal Completed");
+}

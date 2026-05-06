@@ -13,7 +13,8 @@ export const marketplaceABI = [
 export const auctionABI = [
     "function auctions(uint256 auctionId) view returns (address seller, address nftContract, uint256 tokenId, uint256 highestBid, address highestBidder, uint256 endTime, bool active)",
     "function placeBid(uint256 auctionId) payable",
-    "function finalizeAuction(uint256 auctionId)"
+    "function finalizeAuction(uint256 auctionId)",
+    "function withdrawBid(uint256 auctionId)",
 ];
 
 export const API_URL = "http://localhost:8081";

@@ -1,7 +1,7 @@
 import { connectWallet } from "./wallet.js";
 import { mintNFT, approveNFT } from "./nft.js";
 import { fetchListings, listNFT, createAuction } from "./marketplace.js";
-import { fetchAuctions, placeBid, fetchBids, finalizeAuction } from "./auction.js";
+import { fetchAuctions, placeBid, fetchBids, finalizeAuction, withdrawBid } from "./auction.js";
 
 // Expose functions to HTML
 window.connectWallet = connectWallet;
@@ -14,3 +14,4 @@ window.fetchAuctions = fetchAuctions;
 window.placeBid = placeBid;
 window.fetchBids = fetchBids;
 window.finalizeAuction = finalizeAuction;
+window.withdrawBid = withdrawBid;
