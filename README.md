@@ -127,6 +127,46 @@ return db
 ```
 
 ### Ethereum Events and Logs
+An Ethereum block is basically a container with:
+
+- Block metadata (header)
+- A list of transactions
+- Execution results (receipts, logs, gas usage, state changes)
+```
+Block
+├── Header
+│   ├── blockNumber
+│   ├── parentHash
+│   ├── timestamp
+│   ├── miner / validator
+│   ├── gasLimit
+│   ├── gasUsed
+│   ├── stateRoot
+│   ├── transactionsRoot
+│   └── receiptsRoot
+│
+├── Transactions[]
+│   ├── tx1
+│   ├── tx2
+│   └── tx3
+│
+└── (Derived during execution)
+    └── Receipts[]
+        ├── receipt for tx1
+        │      ├── status
+        │      ├── gasUsed
+        │      └── logs[]
+        │          ├── Log #0
+        │          ├── address        // contract address
+        │          ├── topics[]       // indexed event fields + event signature
+        │          ├── data           // non-indexed fields
+        │          ├── blockNumber
+        │          ├── txHash
+        │          ├── logIndex
+        │          └── Log #1
+        ├── receipt for tx2
+        └── receipt for tx3
+```
 ```solidity
 event Transfer(address indexed from, address indexed to, uint256 value);
 ```
@@ -267,7 +307,7 @@ Instead of trusting live events immediately:
                            (loop again)
 ```
 
-### Foundry Test functions
+### Foundry Unit Tests
 - Must start with `test`
 ```solidity
 function testMint() public {}
