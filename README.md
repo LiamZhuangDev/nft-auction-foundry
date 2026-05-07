@@ -191,9 +191,82 @@ npx serve .
 
 # Approve NFT market and List the minted NFT, tokenId starts from 1.
 
-# 
 ```
 ---
+### Reliable Ethereum Event Synchronization (Using Polling and Safe Block Confirmations)
+Real-time subscriptions alone (SubscribeFilterLogs) are unreliable because:
+- the backend may go down and miss events
+- websocket connections can disconnect silently
+- Ethereum blocks near the chain tip may be reorganized (reorgs)
+
+Instead of trusting live events immediately:
+- Periodically poll logs using FilterLogs
+- Only process blocks older than a confirmation threshold
+- Persist the last processed block in the database
+- Replay from that checkpoint after restart
+```
+          ┌──────────────────────────┐
+          │        Start Poller      │
+          └────────────┬─────────────┘
+                       │
+                       ▼
+          ┌──────────────────────────┐
+          │ Load lastProcessedBlock  │
+          │      (from DB)           │
+          └────────────┬─────────────┘
+                       │
+                       ▼
+        ┌───────────────────────────────┐
+        │        Poll Loop (every N s)  │
+        └────────────┬──────────────────┘
+                     │
+                     ▼
+        ┌───────────────────────────────┐
+        │   Get latest block from RPC   │
+        └────────────┬──────────────────┘
+                     │
+                     ▼
+        ┌───────────────────────────────┐
+        │ safeBlock = latest - N_conf   │
+        └────────────┬──────────────────┘
+                     │
+                     ▼
+        ┌───────────────────────────────┐
+        │ safeBlock <= lastProcessed?   │
+        └───────┬───────────────┬───────┘
+                │ YES           │ NO
+                ▼               ▼
+        ┌──────────────┐  ┌──────────────────────────┐
+        │   Sleep      │  │  Process [last+1 → safe] │
+        └──────────────┘  └────────────┬─────────────┘
+                                       │
+                                       ▼
+                        ┌────────────────────────────┐
+                        │  Split into batches (step) │
+                        └────────────┬───────────────┘
+                                     │
+                                     ▼
+                    ┌────────────────────────────────┐
+                    │ FilterLogs(from, to) per batch │
+                    └────────────┬───────────────────┘
+                                 │
+                                 ▼
+                    ┌────────────────────────────────┐
+                    │      For each log:             │
+                    │  - dedup (txHash+logIndex)     │
+                    │  - decode via ABI              │
+                    │  - apply business logic        │
+                    └────────────┬───────────────────┘
+                                 │
+                                 ▼
+                    ┌────────────────────────────────┐
+                    │ Update lastProcessedBlock = to │
+                    └────────────┬───────────────────┘
+                                 │
+                                 ▼
+                           (loop again)
+```
+
 ### Foundry Test functions
 - Must start with `test`
 ```solidity

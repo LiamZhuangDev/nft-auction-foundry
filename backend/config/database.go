@@ -17,7 +17,7 @@ func ConnectDB() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	err = db.AutoMigrate(&models.Listing{}, &models.Auction{}, &models.Bid{})
+	err = db.AutoMigrate(&models.ProcessedEvent{}, &models.SyncState{}, &models.Listing{}, &models.Auction{}, &models.Bid{})
 	if err != nil {
 		log.Fatal(err)
 	}
