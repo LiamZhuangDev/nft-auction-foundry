@@ -44,6 +44,7 @@ function renderAuctions(auctions) {
       <p><strong>NFT: </strong> ${a.NftContract}</p>
       <p><strong>Token ID: </strong> ${a.TokenId}</p>
       <p><strong>Start Price: </strong> ${ethers.formatEther(a.StartPrice)} ETH</p>
+      <p><strong>Start Price: </strong> ${a.StartPriceUSD} USD</p>
       <p><strong>Final Price: </strong> ${finalPrice} ETH</p>
       <p><strong>End Time: </strong> ${new Date(a.EndTime * 1000).toLocaleString()}</p>
       <p><strong>Status: </strong> ${status}</p>

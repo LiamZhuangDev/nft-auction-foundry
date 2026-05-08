@@ -7,6 +7,7 @@ import (
 	"nft-auction-backend/config"
 	"nft-auction-backend/models"
 	"nft-auction-backend/repo"
+	"strconv"
 	"time"
 
 	"github.com/ethereum/go-ethereum"
@@ -28,6 +29,7 @@ type Poller struct {
 	bidRepo        *repo.BidRepo
 	auctionABI     abi.ABI
 	marketplaceABI abi.ABI
+	priceSvc       *PriceService
 }
 
 func NewPoller(
@@ -37,6 +39,7 @@ func NewPoller(
 	listingRepo *repo.ListingRepo,
 	auctionRepo *repo.AuctionRepo,
 	bidRepo *repo.BidRepo,
+	priceSvc *PriceService,
 ) *Poller {
 	return &Poller{
 		Client:         client,
@@ -50,6 +53,7 @@ func NewPoller(
 		bidRepo:        bidRepo,
 		auctionABI:     cfg.AuctionABI,
 		marketplaceABI: cfg.MarketplaceABI,
+		priceSvc:       priceSvc,
 	}
 }
 
@@ -213,23 +217,30 @@ func (p *Poller) handleAuctionCreated(vLog types.Log) error {
 	seller := common.BytesToAddress(vLog.Topics[2].Bytes()) // extract the last 20 bytes for address
 	nftContract := common.BytesToAddress(vLog.Topics[3].Bytes())
 
+	startPriceUSD, err := p.priceSvc.WeiToUSD(data.StartPrice)
+	if err != nil {
+		log.Printf("Failed to convert ETH to USD: %v\n", err)
+		return err
+	}
+
 	// Save auction
 	err = p.auctionRepo.CreateAuction(&models.Auction{
-		AuctionID:   auctionId.Uint64(),
-		Seller:      seller.Hex(),
-		NftContract: nftContract.Hex(),
-		TokenId:     data.TokenId.Uint64(),
-		StartPrice:  data.StartPrice.String(),
-		EndTime:     data.End.Uint64(),
-		Active:      true,
+		AuctionID:     auctionId.Uint64(),
+		Seller:        seller.Hex(),
+		NftContract:   nftContract.Hex(),
+		TokenId:       data.TokenId.Uint64(),
+		StartPrice:    data.StartPrice.String(),
+		StartPriceUSD: startPriceUSD,
+		EndTime:       data.End.Uint64(),
+		Active:        true,
 	})
 	if err != nil {
 		log.Printf("Failed to create auction: %v\n", err)
 		return err
 	}
 
-	log.Printf("AuctionCreated: AuctionID=%d, Seller=%s, NFT=%s, TokenID=%s, StartPrice=%s, EndTime=%d\n",
-		auctionId.Uint64(), seller.Hex(), nftContract.Hex(), data.TokenId.String(), data.StartPrice.String(), data.End.Uint64())
+	log.Printf("AuctionCreated: AuctionID=%d, Seller=%s, NFT=%s, TokenID=%s, StartPrice=%s, StartPriceUSD=%s, EndTime=%d\n",
+		auctionId.Uint64(), seller.Hex(), nftContract.Hex(), data.TokenId.String(), data.StartPrice.String(), strconv.FormatFloat(startPriceUSD, 'f', 2, 64), data.End.Uint64())
 
 	return nil
 }

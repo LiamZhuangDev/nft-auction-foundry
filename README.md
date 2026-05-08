@@ -306,7 +306,75 @@ Instead of trusting live events immediately:
                                  ▼
                            (loop again)
 ```
+---
+### Chainlink Price Feed From Go (ETH to USD for display)
+Read directly from the Chainlink ETH/USD feed contract
+On Ethereum mainnet, the ETH/USD feed is:
+```
+0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419
+```
+This contract exposes:
+```solidity
+latestRoundData()
+```
+- Generate Go Binding
+  - Install abigen 
+  ```bash
+  cd backend 
+  go install github.com/ethereum/go-ethereum/cmd/abigen@latest
+  ```
+  - Create `backend\abi\AggregatorV3Interface.json`
+  ```json
+  [
+    {
+        "inputs": [],
+        "name": "latestRoundData",
+        "outputs": [
+        { "internalType": "uint80", "name": "roundId", "type": "uint80" },
+        { "internalType": "int256", "name": "answer", "type": "int256" },
+        { "internalType": "uint256", "name": "startedAt", "type": "uint256" },
+        { "internalType": "uint256", "name": "updatedAt", "type": "uint256" },
+        { "internalType": "uint80", "name": "answeredInRound", "type": "uint80" }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+  ]
+  ```
+  - Generate binding
+  ```bash
+  cd backend
+  
+  abigen \
+  --abi ./abi/AggregatorV3Interface.json \
+  --pkg chainlink \
+  --out ./service/chainlink.go
 
+  go mod tidy # clean up and install any missing dependencies for the generated chainlink.go
+  ```
+- Create `price_service.go` and use `chainlink.go`
+  ```go
+  // wei -> usd
+  feed, err := NewChainlink(config.ChainlinkFeedAddress, client)
+  data, err := feed.LatestRoundData(nil)
+
+  eth2usdExchangeRate := new(big.Float).Quo(
+      new(big.Float).SetInt(data.Answer),
+      big.NewFloat(1e8), // Chainlink ETH/USD decimals
+  )
+
+  eth2usdExchangeRatef64, _ := eth2usdExchangeRate.Float64()
+
+  ethVal := new(big.Float).Quo(
+	  new(big.Float).SetInt(wei),
+	  big.NewFloat(1e18), // ETH decimals
+  )
+
+  ethFloat, _ := ethVal.Float64()
+
+  usd := ethFloat * eth2usdExchangeRatef64
+  ```
+---
 ### Foundry Unit Tests
 - Must start with `test`
 ```solidity

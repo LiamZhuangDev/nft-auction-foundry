@@ -78,7 +78,13 @@ func main() {
 			AuctionABI:     auctionABI,
 			MarketplaceABI: marketpalceABI,
 		}
-		poller := service.NewPoller(client, cfg, eventRepo, listingRepo, auctionRepo, bidRepo)
+
+		priceSvc, err := service.NewPriceService(client)
+		if err != nil {
+			panic(err)
+		}
+
+		poller := service.NewPoller(client, cfg, eventRepo, listingRepo, auctionRepo, bidRepo, priceSvc)
 		poller.Start(context.Background())
 	}()
 
